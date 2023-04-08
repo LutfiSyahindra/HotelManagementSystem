@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\DaftarTamu;
 use App\Models\Guest;
 use App\Models\Room;
+use App\Models\Visibility;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
 
@@ -16,7 +17,7 @@ class DaftarTamuController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $tamu = Guest::all();
+            $tamu = Guest::latest()->get();
             return DataTables::of($tamu)
                 ->addIndexColumn()
                 ->addColumn('kamar', function ($tamu) {
@@ -44,10 +45,29 @@ class DaftarTamuController extends Controller
                     return 'Rp.' . number_format($tamu->total);
                 })
                 ->addColumn('status', function ($tamu) {
-                    return ucfirst($tamu->status);
+                    if ($tamu->status == 'Reservasi') {
+                        return '<span class="btn btn-success">' . ucfirst($tamu->status) . '</span>';
+                    } elseif ($tamu->status == 'Check-in') {
+                        return '<span class="btn btn-primary">' . ucfirst($tamu->status) . '</div>';
+                    } elseif ($tamu->status == 'Check-out') {
+                        return '<span class="btn btn-danger">' . ucfirst($tamu->status) . '</div>';
+                    }
                 })
                 ->addColumn('action', function ($tamu) {
-                    $btn = ' <a href="booking/' . $tamu->room_id . '" id="booking-visit" data-id="' . $tamu->id . '" class="btn btn-primary btn-md" title="Booking"><i class=" fa fa-id-card-o "></i></a>';
+                    if ($tamu->status == 'Reservasi') {
+                        $button = '<i class="fa fa-sign-in" aria-hidden="true"></i>';
+                        $class = 'primary';
+                        $title = 'Check-in';
+                    } else {
+                        $title = 'Aktifkan';
+                        $class = 'warning';
+                        $button = '<i class="fa fa-undo"></i>';
+                    }
+                    $btn = '<button id="edit-tamu" data-id="' . $tamu->id . '" title="Edit" class="btn btn-primary edit-tamu" style="margin-right:5px" ><i class="fa fa-pencil"></i></button>';
+
+                    $btn = $btn . '<button id="detail-tamu" data-id="' . $tamu->id . '" title="Show" class="btn btn-success detail-tamu"><i class="fa fa-eye"></i></button>';
+
+                    $btn = $btn . ' <button id="delete-tamu" data-id="' . $tamu->room_id . '" class="btn btn-' . $class . ' btn-md" title="' . $title . '">' . $button . '</button>';
 
                     return $btn;
                 })
@@ -89,9 +109,11 @@ class DaftarTamuController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(DaftarTamu $daftarTamu)
+    public function edit($id)
     {
-        //
+        $daftarTamu = DaftarTamu::find($id);
+
+        return response()->json($daftarTamu);
     }
 
     /**
@@ -105,8 +127,22 @@ class DaftarTamuController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(DaftarTamu $daftarTamu)
+    public function destroy($id)
     {
-        //
+        $daftarTamu = Guest::where('room_id',$id)->first();
+        if ($daftarTamu->status == 'Reservasi') {
+            Guest::where('room_id', $id)->update([
+                'status' => 'Check-in',
+            ]);
+            return response()->json(['status' => 'Berhasil Check-in']);
+        } else {
+            Guest::where('room_id', $id)->update([
+                'status' => 'Check-out',
+            ]);
+            Visibility::where('room_id', $id)->update([
+                'status' => 'Available',
+            ]);
+            return response()->json(['status' => 'Berhasil Check-out']);
+        }
     }
 }

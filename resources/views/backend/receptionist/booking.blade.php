@@ -37,12 +37,13 @@
                             target="_blank">
                             Official Inputmask Documentation </a>for a full list of instructions and other options.</p>
                     <div class="row mb-3">
+                        <div class="alert alert-danger" role="alert" style="display: none;"></div>
                         <input type="hidden" name="id" id="id">
                         <div class="col">
                             <label class="form-label">Room</label>
                             <div class="input-group flatpickr" id="flatpickr-date">
                                 <input type="text" class="form-control" id="room_id" name="room_id"
-                                    value="{{ $room->id }}" disabled> 
+                                    value="{{ $room->id }}" disabled>
                             </div>
                         </div>
                         <div class="col-md-6">
@@ -87,7 +88,11 @@
                     <div class="row mb-3">
                         <div class="col-md-6">
                             <label class="form-label">TTL</label>
-                            <input type="text" class="form-control" id="ttl" name="ttl" placeholder="Enter TTL">
+                            <select class="form-select" name="ttl" id="ttl">
+                                <option selected disabled>Select Status</option>
+                                <option>Reservasi</option>
+                                <option>Check-in</option>
+                            </select>
                         </div>
                         <div class="col-md-6">
                             <label for="ageSelect" class="form-label">Gender</label>

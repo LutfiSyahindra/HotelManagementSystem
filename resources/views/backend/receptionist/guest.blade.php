@@ -35,7 +35,7 @@
                                     <td>{{ $g['nik'] }}</td>
                                 </tr>
                                 <tr>
-                                    <td><strong>TTL</strong></td>
+                                    <td><strong>status</strong></td>
                                     <td>{{ $g['ttl'] }}</td>
                                 </tr>
                                 <tr>
@@ -72,6 +72,10 @@
                                         @endforeach
                                     </td>
                                 </tr>
+                                {{-- <tr>
+                                    <td><strong>Status</strong></td>
+                                    <td>{{ $g['status'] }}</td>
+                                </tr> --}}
                                 <tr>
                                     <td><strong>Total Harga</strong></td>
                                     <td>{{'Rp.  ' . number_format($g['total']) }}</td>

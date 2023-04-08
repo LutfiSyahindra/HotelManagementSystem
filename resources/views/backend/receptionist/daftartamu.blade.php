@@ -17,7 +17,7 @@
     <div class="col-md-12 grid-margin stretch-card">
         <div class="card">
             <div class="card-body">
-                <h6 class="card-title">Visibility</h6>
+                <h6 class="card-title">Daftar Tamu</h6>
                 {{-- <button type="button" class="btn btn-primary btn-icon-text" style="margin-bottom: 10px"
                     data-bs-toggle="modal" id="createNewRoom" data-bs-target="#ajaxModal">
                     <i class="btn-icon-prepend" data-feather="file-plus"></i>
@@ -29,13 +29,13 @@
                             <tr>
                                 <th>Id</th>
                                 <th>Nama Tamu</th>
-                                <th>NIK</th>
+                                {{-- <th>NIK</th>
                                 <th>Jenis Kelamin</th>
-                                <th>No-Tlp</th>
+                                <th>No-Tlp</th> --}}
                                 <th>Kamar</th>
                                 <th>Check-in</th>
                                 <th>Check-out</th>
-                                <th>Total Harga</th>
+                                {{-- <th>Total Harga</th> --}}
                                 <th>Status</th>
                                 <th>Action</th>
                             </tr>
@@ -47,6 +47,69 @@
             </div>
         </div>
     </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="ajaxModal" tabindex="-1" aria-labelledby="exampleModalScrollableTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modelHeading"></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="btn-close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="alert alert-danger" role="alert" style="display: none;"></div>
+                <form id="fasilitasForm" name="fasilitasForm" class="form-sample">
+                    <input type="hidden" name="id" id="id">
+                    <div class="row mb-3">
+                        <label for="fasilitas" class="col-sm-3 col-form-label">Name</label>
+                        <div class="col-sm-9">
+                            <input type="text" class="form-control" id="name" name="name"
+                                placeholder="Enter fasilitas">
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <label for="ket" class="col-sm-3 col-form-label">NIK</label>
+                        <div class="col-sm-9">
+                            <textarea type="text" class="form-control" id="nik" name="nik"
+                                placeholder="Enter Description">
+                                </textarea>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <label for="ket" class="col-sm-3 col-form-label">Jenis Kelamin</label>
+                        <div class="col-sm-9">
+                            <textarea type="text" class="form-control" id="jk" name="jk"
+                                placeholder="Enter Description">
+                                </textarea>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <label for="harga" class="col-sm-3 col-form-label">Price</label>
+                        <div class="col-sm-9">
+                            <input type="text" class="form-control" id="harga" name="harga" placeholder="Enter Price">
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <label class="col-md-3 control-label" for="img">Image</label>
+                        <div class="col-md-9">
+                            <div id="gambar">
+                                <input type="file" id="img" name="img" class="form-control"
+                                    placeholder="Masukkan Foto Profil Pelatih">
+                            </div>
+                            <img id="image_preview" src="" style="margin-top: 1px" height="250px" width="250px" alt="">
+                        </div>
+                    </div>
+                    <div class="modal-footer" id="button">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" id="saveBtn" value="create" class="btn btn-primary">Save
+                            changes</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
 </div>
 
 @endsection
@@ -92,18 +155,18 @@
                     data: 'Nama Tamu',
                     name: 'Nama Tamu'
                 },
-                {
-                    data: 'NIK',
-                    name: 'NIK'
-                },
-                {
-                    data: 'Jenis Kelamin',
-                    name: 'Jenis Kelamin'
-                },
-                {
-                    data: 'No-Telp',
-                    name: 'No-Telp'
-                },
+                // {
+                //     data: 'NIK',
+                //     name: 'NIK'
+                // },
+                // {
+                //     data: 'Jenis Kelamin',
+                //     name: 'Jenis Kelamin'
+                // },
+                // {
+                //     data: 'No-Telp',
+                //     name: 'No-Telp'
+                // },
                 {
                     data: 'kamar',
                     name: 'kamar'
@@ -116,10 +179,10 @@
                     data: 'Check-out',
                     name: 'Check-out'
                 },
-                {
-                    data: 'harga',
-                    name: 'harga'
-                },
+                // {
+                //     data: 'harga',
+                //     name: 'harga'
+                // },
                 {
                     data: 'status',
                     name: 'status'
@@ -133,85 +196,26 @@
             ]
         });
        
-        // Create New Pelanggan.
-        $('#booking-visit').click(function() {
-            $('#saveBtn').val("create-user");
-            $('#id').val('');
-            $('#userForm').trigger("reset");
-            $('#modelHeading').html("TAMBAH DATA USER");
-            $('#ajaxModal').modal('show');
+       $('body').on('click', '.edit-tamu', function() {
+        // document.getElementById('pass').style.visibility = 'hidden';
+        var id = $(this).data('id');
+        $.get("{{ route('daftartamu.index') }}" + '/' + id + '/edit', function(
+        data) {
+        console.log(data)
+        $('#modelHeading').html("EDIT DATA KARYAWAN");
+        $('#saveBtn').val("edit-user");
+        $('#ajaxModal').modal('show');
+        $('#id').val(data.id);
+        $('#name').val(data.name);
+        $('#email').val(data.email);
+        $('#password').val(data.password);
+        $('#role').val(data.roles);
+        })
         });
-        
-        $('#saveBtn').click(function(e) {
-            e.preventDefault();
-            $(this).html('Sending..');
-            var formData = $('#userForm').serialize();
-            $.ajax({
-                url: "{{ route('visit.store') }}",
-                // method: 'post',
-                data: {
-                    id: $('#id').val(),
-                    name: $('#name').val(),
-                    email: $('#email').val(),
-                    password: $('#password').val(),
-                    role: $('#role').val(),
-                },
-                // data: $('#supplierForm').serialize(),
-                type: "POST",
-                dataType: 'json',
-                success: function(response) {
-                    console.log(response)
-                    if (response.errors) {
-                        $('.alert-danger').html('');
-                        $.each(response.errors, function(key, value) {
-                            $('.alert-danger').show();
-                            $('.alert-danger').append(
-                                '<li>' + value +
-                                '</li>');
-                        });
-                        $('#saveBtn').html('SIMPAN');
-                    } else {
-                        $('.alert-danger').hide();
-                        const Toast = Swal.mixin({
-                            toast: true,
-                            position: 'top-end',
-                            showConfirmButton: false,
-                            timer: 3000,
-                            timerProgressBar: true,
-                        });
 
-                        Toast.fire({
-                            icon: 'success',
-                            title: 'Success Add Data'
-                        })
-                        $('#userForm').trigger("reset");
-                        $('#saveBtn').html('SIMPAN');
-                        $('#ajaxModal').modal('hide');
-                        table.draw();
-                    }
-                }
-            });
-        });
-        // Edit Data Room
-        $('body').on('click', '.edit-user', function() {
-            // document.getElementById('pass').style.visibility = 'hidden';
-            var id = $(this).data('id');
-            $.get("{{ route('karyawan.index') }}" + '/' + id + '/edit', function(
-                data) {
-                console.log(data)
-                $('#modelHeading').html("EDIT DATA KARYAWAN");
-                $('#saveBtn').val("edit-user");
-                $('#ajaxModal').modal('show');
-                $('#id').val(data.id);
-                $('#name').val(data.name);
-                $('#email').val(data.email);
-                $('#password').val(data.password);
-                $('#role').val(data.roles);
-            })
-        });
         // Arsipkan Data
        // Arsipkan Data
-        $('body').on('click', '#delete-user', function() {
+        $('body').on('click', '#delete-tamu', function() {
             const swalWithBootstrapButtons = Swal.mixin({
                 customClass: {
                     confirmButton: 'btn btn-success',
@@ -235,7 +239,7 @@
                         var id = $(this).data("id");
                         $.ajax({
                             type: "DELETE",
-                            url: 'karyawan/' + id,
+                            url: 'daftartamu/' + id,
                             data: id,
                             success: function(response) {
                                 swalWithBootstrapButtons.fire(response.status, {

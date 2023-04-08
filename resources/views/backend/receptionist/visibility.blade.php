@@ -1,5 +1,11 @@
 @extends('backend.layout.main')
 @push('style-alt')
+<!-- Layout styles -->
+<link rel="stylesheet" href="{{ asset('backend/assets/css/demo1/style.css') }}">
+<!-- End layout styles -->
+<!-- core:css -->
+<link rel="stylesheet" href="{{ asset('backend/assets/vendors/core/core.css') }}">
+<!-- endinject -->
 <link rel="stylesheet" href="{{ asset('backend/assets/vendors/datatables.net-bs5/dataTables.bootstrap5.css') }}">
 <!-- Plugin css for this page -->
 <link rel="stylesheet" href="{{ asset('backend/assets/vendors/sweetalert2/sweetalert2.min.css') }}">

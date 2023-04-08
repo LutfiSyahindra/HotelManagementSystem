@@ -41,7 +41,6 @@ Route::middleware('auth')->group(function () {
     Route::resource('room', RoomController::class);
     Route::resource('karyawan', KaryawanController::class);
     Route::resource('service', FasilitasController::class);
-    Route::resource('ser', FasilController::class);
     Route::resource('booking', GuestController::class);
     Route::get('/trans', GuestController::class.'@transaksi')->name('trans.transaksi');
     Route::resource('visit', VisibilityController::class);

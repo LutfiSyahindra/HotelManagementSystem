@@ -22,7 +22,11 @@ return new class extends Migration
             $table->string('ttl');
             $table->string('jk');
             $table->string('address');
-            $table->string('no_telp');
+            $table->string('no_tlp');
+            $table->string('check_in');
+            $table->string('check_out');
+            $table->integer('total');
+            $table->string('status');
             $table->timestamps();
         });
     }

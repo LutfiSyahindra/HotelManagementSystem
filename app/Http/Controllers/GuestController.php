@@ -6,6 +6,7 @@ use App\Models\DetailTransaksi;
 use App\Models\Fasilitas;
 use App\Models\Guest;
 use App\Models\Room;
+use App\Models\Visibility;
 use DateTime;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -27,6 +28,29 @@ class GuestController extends Controller
      */
     public function create(Request $request)
     {
+
+        $validator = Validator::make($request->all(), [
+            'room_id' => 'required',
+            'fasilitas_id' => 'required',
+            'name' => 'required',
+            'nik' => 'required',
+            'ttl' => 'required',
+            'jk' => 'required',
+            'address' => 'required',
+            'no_tlp' => 'required',
+            'check_in' => 'required',
+            'check_out' => 'required',
+            'email' => 'required',
+            'hargarr' => 'required',
+            
+        ]);
+
+        //check if validation fails
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()->all()]);
+        }
+
+
         $tgl1 = new DateTime($request->check_in);
         $tgl2 = new DateTime($request->check_out);
         $totgl = $tgl2->diff($tgl1);
@@ -48,7 +72,6 @@ class GuestController extends Controller
         $kmr = $request->hargarr;
         $kmrtot = $kmr * $tot;
 
-
         // get name room
         $name_room = Room::where('id', $request->room_id)->first();
         // dd($request->hargarr+$barang);
@@ -56,7 +79,7 @@ class GuestController extends Controller
         $data_guest = [
             // 'id' => $request->input('id'),
             'room_id' => $request->room_id,
-            'fasilitas_id' =>$fasilitas,
+            'fasilitas_id' => $fasilitas,
             'name' => $request->name,
             'nik' => $request->nik,
             'ttl' => $request->ttl,
@@ -96,7 +119,7 @@ class GuestController extends Controller
             'room_id' => $input['room_id'],
             'name' => $input['name'],
             'nik' => $input['nik'],
-            'ttl' => $input['ttl'],
+            'status' => $input['ttl'],
             'jk' => $input['jk'],
             'no_tlp' => $input['no_tlp'],
             'address' => $input['address'],
@@ -109,7 +132,7 @@ class GuestController extends Controller
         // Insert Order Product
         $order_detail = [];
         foreach ($input['fasilitas_id'] as $item) {
-            foreach($item['data'] as $key){
+            foreach ($item['data'] as $key) {
                 $order_detail[] = [
                     'guests_id' => $insert->id,
                     'fasilitas_id' => $key['id'],
@@ -119,7 +142,13 @@ class GuestController extends Controller
         // dd($order_detail);
         DetailTransaksi::insert($order_detail);
 
-        return 'sukses';
+
+        // update status visibility
+        Visibility::where('room_id', $input['room_id'])->update([
+            'status' => 'booked'
+        ]);
+
+        return redirect()->route('visit.index');
     }
 
     /**
